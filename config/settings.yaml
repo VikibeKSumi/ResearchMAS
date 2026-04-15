@@ -1,0 +1,8 @@
+
+"Project": "ResearchMAS"
+models:
+  "llm": "llama-3.3-70b-versatile"
+  "bi-encoder": ""
+  "cros-encoder": ""
+  "vectorDB": ""
+
