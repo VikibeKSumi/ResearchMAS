@@ -3,20 +3,21 @@ from langgraph.graph import (
         StateGraph,
         END
     )
-from langgraph.checkpoint.memory import MemorySaver 
+from langgraph.checkpoint.sqlite import SqliteSaver 
 from graph.state import ResearchState
 from agents.orchestrator import orchestrator
 from agents.researcher import researcher
 from agents.analyst import analyst
 from agents.writer import writer
 from agents.critic import critic
+from config.config import config
+
 
 class graph():
     
     def __init__(self, query: str=""):
         self.query = {"query": query}
         self.checkpointer_config = {"configurable": {"thread_id": "session_001"}}
-        self.memory = MemorySaver()
         
     @staticmethod
     def route_critic(state: ResearchState):
@@ -30,7 +31,8 @@ class graph():
     def run_graph(self):
         
         workflow = StateGraph(ResearchState)
-        
+        checkpointer_path = config.checkpointer_path
+
         #===============NODE CREATION======================
         workflow.add_node("orchestrator_node", orchestrator)
         workflow.add_node("researcher_node", researcher)
@@ -53,13 +55,13 @@ class graph():
                 "REVISION": "writer_node",
                 "FINISH": END,
             })
-
         #===============EXECUTION======================
-        app = workflow.compile(
-            checkpointer=self.memory
-        )
+        with SqliteSaver.from_conn_string(checkpointer_path) as memory:
+            app = workflow.compile(
+                checkpointer=memory
+            )
 
-        result = app.invoke(input=self.query, config=self.checkpointer_config)
+            result = app.invoke(input=self.query, config=self.checkpointer_config)
 
         logger.info("Graph Execution Over")
         print(f"Writer Output: {result.get('writer_result')}")

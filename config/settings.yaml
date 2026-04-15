@@ -1,8 +1,11 @@
 
-"Project": "ResearchMAS"
+"project": "ResearchMAS"
 models:
   "llm": "llama-3.3-70b-versatile"
   "bi-encoder": ""
   "cros-encoder": ""
   "vectorDB": ""
 
+database:
+  "checkpointer_path": "memory/checkpointer/checkpoints.db"
+  "vectordb_path": "memory/vectordb"
