@@ -13,11 +13,22 @@ client = Groq(api_key=api_key)
 def analyst(state: ResearchState):
     logger.info("Analyst Node Running")
     researcher_result = state.get("researcher_result", "")
+    retrieved_result = state.get("retrieved_result", "")
+
     llm_model = config.llm_model
 
+
+    system_prompt =f"""You are an analyst. Synthesize 
+        the web research and internal knowledge 
+        base results into structured insights — key facts, gaps, 
+        and conclusions"""
+    
+    user_prompt = f"""Web Research:\n{researcher_result}\n\n
+        Internal Knowledge Base:\n{retrieved_result}"""
+    
     messages = [
-        {"role": "system", "content": "you are an analyst, Analyse the research summary and extract structured insights — key facts, gaps, conclusions"},
-        {"role": "user", "content": f"summarize {researcher_result}"}
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt}
     ]
 
     try:
