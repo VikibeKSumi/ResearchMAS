@@ -4,9 +4,7 @@ from tools.reranker import reranker
 from config.config import config
 from groq import Groq
 from loguru import logger
-from dotenv import load_dotenv
 import os
-load_dotenv()
 
 
 api_key = os.getenv("GROQ_API_KEY")
@@ -20,14 +18,17 @@ def retriever(state: ResearchState):
     
     retrieved_nodes = vectorSearch(query=query)
 
-    #reranked_nodes = reranker(retrieved_nodes=retrieved_nodes)
-
-    node_texts = "\n\n".join([node.get_content() for node in retrieved_nodes])
+    if retrieved_nodes is None:
+        return {"retrieved_results": "Vector DB Unavailable"}
+    
+    reranked_nodes = reranker(retrieved_nodes=retrieved_nodes, query=query)
+    
+    node_texts = "\n\n".join([node.get_content() for node in reranked_nodes])
     
     system_prompt = f"""You are a retriever agent. Analyze this \
         query and summarize what needs to be researched.
         """
-    user_prompt = f"""f"Query: {query}\n\n retrieved results: {node_texts}\n\n \
+    user_prompt = f"""Query: {query}\n\n retrieved results: {node_texts}\n\n \
         Provide a detailed research summary"""
     
     messages = [

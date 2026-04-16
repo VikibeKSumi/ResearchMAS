@@ -1,12 +1,11 @@
 from groq import Groq
-from dotenv import load_dotenv
 import os
 from graph.state import ResearchState
 from loguru import logger
 from config.config import config
 
 
-load_dotenv()
+
 api_key = os.getenv("GROQ_API_KEY")
 client = Groq(api_key=api_key)
 
@@ -15,7 +14,7 @@ def critic(state: ResearchState):
     
     logger.info("Critic Node Running")
     revision_count = state.get("revision_count", 0)
-    llm_model = config.llm
+    llm_model = config.llm_model
     writer_result = state.get("writer_result","")
     revision_needed = False
     research_needed = False

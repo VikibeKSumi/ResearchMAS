@@ -1,12 +1,11 @@
 from graph.state import ResearchState
 from groq import Groq
 import os
-from dotenv import load_dotenv
 from loguru import logger
 from config.config import config
 
 
-load_dotenv()
+
 api_key = os.getenv("GROQ_API_KEY")
 client = Groq(api_key=api_key)
 
@@ -14,7 +13,7 @@ client = Groq(api_key=api_key)
 def analyst(state: ResearchState):
     logger.info("Analyst Node Running")
     researcher_result = state.get("researcher_result", "")
-    llm_model = config.llm
+    llm_model = config.llm_model
 
     messages = [
         {"role": "system", "content": "you are an analyst, Analyse the research summary and extract structured insights — key facts, gaps, conclusions"},

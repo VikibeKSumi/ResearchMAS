@@ -1,11 +1,10 @@
 from graph.state import ResearchState
 import os
-from dotenv import load_dotenv
 from groq import Groq
 from loguru import logger
 from config.config import config
 
-load_dotenv()
+
 api_key = os.getenv("GROQ_API_KEY")
 client = Groq(api_key=api_key)
 
@@ -14,7 +13,7 @@ def writer(state: ResearchState):
     logger.info("Writer Node Running")
 
     analyst_result = state.get("analyst_result", "")
-    llm_model = config.llm
+    llm_model = config.llm_model
 
 
     prompt = f"use {analyst_result} and turn it into a writing.\

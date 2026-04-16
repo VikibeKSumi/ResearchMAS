@@ -1,20 +1,19 @@
 import os
 from groq import Groq
 from loguru import logger
-from dotenv import load_dotenv
+
 
 from tools.web_search import web_search
 from graph.state import ResearchState
 from config.config import config
 
-load_dotenv()
 api_key = os.getenv("GROQ_API_KEY")
 client = Groq(api_key=api_key)
 
 def researcher(state: ResearchState) -> dict:
     logger.info("Researcher Node Running")
     query = state.get('query')
-    llm_model = config.llm
+    llm_model = config.llm_model
     
     try:
         web_search_result = web_search(query=query)

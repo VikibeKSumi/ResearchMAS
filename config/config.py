@@ -21,10 +21,15 @@ class Config:
         Path(self.checkpointer_path).parent.mkdir(parents=True, exist_ok=True)
         self.vectordb_path = self.config.get("database",{}).get("vectordb_path")
         Path(self.vectordb_path).parent.mkdir(parents=True, exist_ok=True)
+        
         self.groq_api = os.getenv("GROQ_API_KEY")
         self.tavily_api = os.getenv("TAVILY_API_KEY")
-        self.llm_model = self.config.get("models").get("llm")
-       
+        
+        self.llm_model = self.config.get("models", {}).get("llm_model")
+        self.bi_encoder = self.config.get("models", {}).get("bi_encoder")
+        self.cross_encoder = self.config.get("models", {}).get("cross_encoder")
+
+
         try:
             self.validate()
         except ValueError as e:
@@ -33,15 +38,23 @@ class Config:
         
     
     def validate(self):
-        if not self.llm:
+        if not self.llm_model:
             raise ValueError("LLM model is not set in setting.yaml")
-        if not self.db_path:
-            raise ValueError("Database path is not set in settings.yaml")
-    
+        if not self.bi_encoder:
+            raise ValueError("Bi-Encoder path is not set in settings.yaml")
+        if not self.cross_encoder:
+            raise ValueError("Cross-Encoder path is not set in settings.yaml")
+        
+        if not self.checkpointer_path:
+            raise ValueError("Checkpointer Database path is not set in settings.yaml")
+        if not self.vectordb_path:
+            raise ValueError("Vector DB path is not set in settings.yaml")
+        
         if not self.groq_api:
             raise ValueError("Groq API Key is not in .env")
         if not self.tavily_api:
             raise ValueError("Tavily API Key is not in .env")
  
+
 
 config = Config()

@@ -3,9 +3,8 @@ from config.config import config
 from loguru import logger
 from groq import Groq
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+
 api_key = os.getenv("GROQ_API_KEY")
 client = Groq(api_key=api_key)
 
@@ -14,7 +13,7 @@ def orchestrator(state: ResearchState):
     logger.info("Orchestrator Node Running")
 
     query = state.get("query","")
-    llm_model = config.llm
+    llm_model = config.llm_model
     
     system_prompt = """You are a query re-writer. You take a given query and\
     rewrite it so it can be best understood by LLM
